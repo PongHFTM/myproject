@@ -49,3 +49,30 @@ window.onscroll = () => {
 
     footer.classList.toggle("show-animate", this.innerHeight + this.scrollY >= document.scrollingElement.scrollHeight);
 }
+
+
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();  // Verhindert das Standardformularverhalten
+    
+    var form = e.target;
+    var formData = new FormData(form);
+    
+    fetch(form.action, {
+        method: form.method,
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            document.getElementById("form-message").innerHTML = "Thank you for your message! We will get back to you soon.";
+            form.reset();
+        } else {
+            response.json().then(data => {
+                document.getElementById("form-message").innerHTML = data.message || "Oops! There was a problem submitting your form.";
+            });
+        }
+    }).catch(error => {
+        document.getElementById("form-message").innerHTML = "There was a problem submitting your form. Please try again.";
+    });
+});
